@@ -4,15 +4,6 @@ on:
   pull_request_target:
     types: [opened, synchronize, reopened, closed]
   workflow_dispatch:
-    inputs:
-      pull-request:
-        description: Pull request to compare; the sample contract is PR 1.
-        type: number
-        default: 1
-      publish:
-        description: Publish browser views and update PR comments.
-        type: boolean
-        default: true
 
 permissions:
   contents: read
@@ -23,7 +14,4 @@ permissions:
 
 jobs:
   review:
-    uses: JSv4/docx-actions/.github/workflows/review.yml@8ee6e587cba9f30f87b68faa9745ce143c4b189d
-    with:
-      pull-request: ${{ fromJSON(format('{0}', inputs.pull-request || 0)) }}
-      publish: ${{ github.event_name != 'workflow_dispatch' || fromJSON(format('{0}', inputs.publish)) }}
+    uses: JSv4/docx-actions/.github/workflows/review.yml@65250fa7d728beffdf7fd09e7aab4d516281decc

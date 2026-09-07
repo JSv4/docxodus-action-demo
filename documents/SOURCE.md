@@ -25,6 +25,14 @@ fictional. The derivative intentionally retains other model alternatives and
 unfilled placeholders; it is not a completed charter or legal advice.
 `changes.json` records every intentional edit and both file hashes.
 
+The documents at `charter.DOCX`,
+`contracts/certificate-of-incorporation.docx`, and
+`subsidiary/certificate-of-incorporation.docx` on `main` are byte-for-byte copies
+of the original. The sample PR applies the generated revisions to each, using
+the fictional corporation names Harbor Analytics, Aurora Robotics, and Aurora
+Labs respectively. These additional copies and variants have the same provenance
+and third-party licensing as the fixtures in this directory.
+
 Only the payloads of `word/document.xml` and `word/footnotes.xml` are changed.
 All other package-part payloads, including styles, numbering, relationships,
 headers and footers, remain identical to the original. ZIP serialization can
