@@ -57,10 +57,10 @@ permissions:
   pull-requests: write
 jobs:
   review:
-    uses: JSv4/docx-actions/.github/workflows/review.yml@5cd3069414e1ab42788a7f00dfe4b68e26c78d6c
+    uses: JSv4/docx-actions/.github/workflows/review.yml@v2.0.0
 ```
 
-The demo is testing the v2 release candidate before pinning the published tag.
+The demo is pinned to the published `@v2.0.0` release.
 There is deliberately **no `with:` block**.
 Discovery, Git history, engine setup,
 HTML rendering, change logs, comment updates, and optional Pages publication

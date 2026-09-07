@@ -12,4 +12,4 @@ permissions:
 
 jobs:
   review:
-    uses: JSv4/docx-actions/.github/workflows/review.yml@5cd3069414e1ab42788a7f00dfe4b68e26c78d6c
+    uses: JSv4/docx-actions/.github/workflows/review.yml@v2.0.0
