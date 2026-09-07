@@ -26,11 +26,12 @@ cross-references, bookmarks, and multiple sections. The variants use different
 corporation names while demonstrating text edits, moved provisions, formatting,
 footnotes, and a newly inserted table.
 
-Read the automatic **Word document review** comment for the document index.
-Each file gets its own preview comment, with preceding/following context and
-**Expand in full document** links. The browser viewer includes every changed
-passage, Previous/Next navigation, and a direct Word download with native tracked
-changes. Images are rendered from the actual comparison output.
+One automatic **Word document review** comment lists all documents, revision
+counts, browser links, and Word downloads. Expand a document's preview to see
+changes with preceding/following context and **Expand in full document** links.
+Multi-document previews start collapsed; a single-document PR opens its preview
+automatically. The browser viewer includes every changed passage and
+Previous/Next navigation. Images are rendered from the actual comparison output.
 
 The complete artifact bundle remains available in Actions, but reading the
 redlines does not require downloading a ZIP.
@@ -54,10 +55,12 @@ permissions:
   id-token: write
 jobs:
   review:
-    uses: JSv4/docx-actions/.github/workflows/review.yml@65250fa7d728beffdf7fd09e7aab4d516281decc
+    uses: JSv4/docx-actions/.github/workflows/review.yml@v1.0.0
 ```
 
-There is deliberately **no `with:` block**. Discovery, Git history, engine setup,
+The demo is pinned to the published `@v1.0.0` release.
+There is deliberately **no `with:` block**.
+Discovery, Git history, engine setup,
 HTML rendering, screenshots, Pages deployment, and comment updates are packaged
 in `docx-actions`. GitHub Pages is enabled once with **GitHub Actions** as its
 source. No personal token or custom secrets are used.
@@ -74,7 +77,7 @@ Edit an existing `.docx` **anywhere in this repository**, commit, and open a pul
 request. Every matching changed document gets a comparison against the PR's
 merge-base. Added and deleted files get clearly labeled full-document views.
 Rename a document and its previous path is retained. Push again to update the
-same bot-owned comments.
+same bot-owned comment.
 
 There is no document-path configuration to update when adding a folder or file.
 Manual runs rebuild the preview index from existing artifacts. Previews for open
