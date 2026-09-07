@@ -1,63 +1,29 @@
-name: Publish browser and inline previews
+name: Word document review
 
 on:
-  workflow_run:
-    workflows: [NVCA comparison demo, Redline changed Word documents]
-    types: [completed]
+  pull_request_target:
+    types: [opened, synchronize, reopened, closed]
   workflow_dispatch:
+    inputs:
+      pull-request:
+        description: Pull request to compare; the sample contract is PR 1.
+        type: number
+        default: 1
+      publish:
+        description: Publish browser views and update PR comments.
+        type: boolean
+        default: true
 
 permissions:
   contents: read
   actions: read
-
-concurrency:
-  group: publish-docx-previews
-  cancel-in-progress: false
+  pull-requests: write
+  pages: write
+  id-token: write
 
 jobs:
-  publish:
-    if: github.event_name == 'workflow_dispatch' || github.event.workflow_run.conclusion == 'success'
-    runs-on: ubuntu-latest
-    timeout-minutes: 15
-    permissions:
-      contents: read
-      actions: read
-      pages: write
-      id-token: write
-      pull-requests: write
-    environment:
-      name: github-pages
-      url: ${{ steps.deployment.outputs.page_url }}
-    steps:
-      - name: Check out trusted publishing code
-        uses: actions/checkout@v4
-        with:
-          ref: main
-          persist-credentials: false
-      - uses: actions/setup-python@v5
-        with:
-          python-version: '3.12'
-      - name: Install preview rendering tools
-        run: |
-          python -m pip install lxml==6.0.2 playwright==1.58.0
-          python -m playwright install --with-deps chromium
-      - name: Collect verified comparison outputs
-        env:
-          GH_TOKEN: ${{ github.token }}
-        run: python scripts/collect_previews.py
-      - name: Render browser pages and inline excerpts
-        run: |
-          python scripts/test_preview.py
-          python scripts/build_preview.py
-          python scripts/test_preview_browser.py
-      - uses: actions/configure-pages@v5
-      - uses: actions/upload-pages-artifact@v4
-        with:
-          path: _site
-      - name: Publish full HTML and preview images
-        id: deployment
-        uses: actions/deploy-pages@v4
-      - name: Update inline PR previews
-        env:
-          GH_TOKEN: ${{ github.token }}
-        run: python scripts/post_previews.py
+  review:
+    uses: JSv4/docx-actions/.github/workflows/review.yml@8ee6e587cba9f30f87b68faa9745ce143c4b189d
+    with:
+      pull-request: ${{ github.event_name == 'workflow_dispatch' && inputs.pull-request || 0 }}
+      publish: ${{ github.event_name != 'workflow_dispatch' || inputs.publish }}
