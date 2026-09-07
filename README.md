@@ -54,7 +54,7 @@ permissions:
   id-token: write
 jobs:
   review:
-    uses: JSv4/docx-actions/.github/workflows/review.yml@65250fa7d728beffdf7fd09e7aab4d516281decc
+    uses: JSv4/docx-actions/.github/workflows/review.yml@90587800e4d341b35ca7ff738f21c014fb078155
 ```
 
 There is deliberately **no `with:` block**. Discovery, Git history, engine setup,
