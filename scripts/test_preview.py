@@ -6,7 +6,7 @@ import unittest
 
 from lxml import etree as ET
 
-from build_preview import contextual_excerpt, neighboring_block, prepare_document
+from build_preview import contextual_excerpt, neighboring_block, prepare_document, serialize_html
 
 
 class PreviewTests(unittest.TestCase):
@@ -28,7 +28,7 @@ class PreviewTests(unittest.TestCase):
             self.assertIn('Content-Security-Policy', result)
             self.assertNotIn('onclick', result)
             self.assertNotIn('javascript:', result)
-            root = ET.parse(str(target))
+            root = ET.parse(str(target), ET.HTMLParser())
             self.assertFalse(root.xpath('//*[local-name()="script" or local-name()="iframe"]'))
             self.assertEqual(changes[1]["kind"], 'Formatting')
 
@@ -42,7 +42,7 @@ class PreviewTests(unittest.TestCase):
 <p>Notice is due within <del>30</del> <ins>45</ins> days.</p>
 <p>The following paragraph describes delivery.</p></div></body></html>''')
             [change] = prepare_document(source, target)
-            result = contextual_excerpt(target, change, 1, 1)
+            result = contextual_excerpt(change, 1, 1)
             text = "".join(result.itertext())
             self.assertIn("Prior paragraph establishes", text)
             self.assertIn("following paragraph describes", text)
@@ -51,6 +51,19 @@ class PreviewTests(unittest.TestCase):
             self.assertEqual(len(result.xpath('//*[local-name()="ins"]')), 1)
             before = neighboring_block(change["node"], "before")
             self.assertIsNone(neighboring_block(before, "before"))
+
+    def test_html_serialization_keeps_numbering_and_bookmarks_from_swallowing_text(self):
+        root = ET.fromstring('''<html xmlns="http://www.w3.org/1999/xhtml"><head><meta charset="UTF-8"/></head>
+<body><p><a id="bookmark"/><span class="number"><span>2.2</span><span data-docx-tab="left"/></span>
+<span class="prose">Distribution of Remaining Assets.</span><br/>Next line.</p></body></html>''')
+        serialized = serialize_html(root)
+        result = ET.HTML(serialized)
+        self.assertEqual(result.xpath('string(//span[@class="number"])'), '2.2')
+        self.assertEqual(result.xpath('count(//span[@class="prose"]/parent::p)'), 1)
+        self.assertEqual(result.xpath('count(//a[@id="bookmark"]/*)'), 0)
+        self.assertEqual(result.xpath('count(//br)'), 1)
+        self.assertNotIn(b'</br>', serialized)
+        self.assertIn(b'<span data-docx-tab="left"></span>', serialized)
 
 
 if __name__ == "__main__":

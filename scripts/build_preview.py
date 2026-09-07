@@ -35,6 +35,16 @@ def inline(node):
     return value
 
 
+def serialize_html(root):
+    """Write HTML5, keeping empty spans/anchors closed and void tags unpaired."""
+    document = deepcopy(root)
+    for node in document.iter():
+        if isinstance(node.tag, str) and node.tag.startswith(H):
+            node.tag = ET.QName(node).localname
+    ET.cleanup_namespaces(document)
+    return b"<!doctype html>\n" + ET.tostring(document, encoding="UTF-8", method="html")
+
+
 def prepare_document(source, destination):
     parser = ET.XMLParser(resolve_entities=False, no_network=True)
     root = ET.fromstring(source.read_bytes(), parser)
@@ -78,7 +88,7 @@ def prepare_document(source, destination):
         accepted = " ".join("".join(node.xpath(".//text()[not(ancestor::h:del)]", namespaces=NS)).split())
         changed.append({"id": identifier, "number": number, "label": (accepted or plain(node))[:100],
                         "kind": kind, "markup": inline(node), "node": node})
-    destination.write_bytes(ET.tostring(root, encoding="UTF-8", method="xml"))
+    destination.write_bytes(serialize_html(root))
     return changed
 
 
@@ -109,8 +119,8 @@ def append_block(parent, node):
         parent.append(fragment)
 
 
-def contextual_excerpt(document, change, index, total):
-    root = ET.parse(str(document)).getroot()
+def contextual_excerpt(change, index, total):
+    root = deepcopy(change["node"].getroottree().getroot())
     body = root.find("h:body", NS)
     for child in list(body):
         body.remove(child)
@@ -150,9 +160,9 @@ def render_images(browser, document, changes, output):
     page.route(re.compile(r"https?://"), lambda route: route.abort())
     for index, change in enumerate(selected, 1):
         # Preserve the neighboring paragraphs and document styling around the edit.
-        root = contextual_excerpt(document, change, index, len(selected))
+        root = contextual_excerpt(change, index, len(selected))
         excerpt = output / f"excerpt-{index}.html"
-        excerpt.write_bytes(ET.tostring(root, encoding="UTF-8"))
+        excerpt.write_bytes(serialize_html(root))
         page.goto(excerpt.resolve().as_uri())
         page.evaluate("document.fonts.ready")
         page.evaluate("""document.querySelectorAll('.excerpt-before .excerpt-window, .excerpt-after .excerpt-window').forEach(window => {

@@ -35,6 +35,14 @@ def main():
             assert "2 of" in page.locator("#position").inner_text()
             assert page.locator("#document").evaluate("f => f.contentDocument.querySelectorAll('ins').length") > 0
             assert page.locator("#document").evaluate("f => f.contentWindow.scrollY") > 0
+            # Empty spans/anchors must not absorb prose when the browser parses HTML.
+            distribution = page.frame_locator("#document").locator("p").filter(has_text="Distribution of Remaining Assets").first
+            if distribution.count():
+                assert distribution.evaluate("e => e.querySelector('span').textContent.trim()") == '2.2'
+                assert distribution.evaluate("e => e.children.length") > 10
+                assert distribution.evaluate("e => e.getBoundingClientRect().height") < 400
+                distribution.screenshot(path="/tmp/docxodus-distribution-fixed.png")
+                page.locator("#changes").select_option("review-change-2")
             page.screenshot(path="/tmp/docxodus-preview-viewer.png", full_page=True)
             page.reload()
             page.wait_for_function("document.getElementById('position').textContent.includes('2 of')")
