@@ -1,0 +1,39 @@
+name: Try review options
+
+on:
+  workflow_dispatch:
+    inputs:
+      pull-request:
+        description: Pull request to render (no document paths needed)
+        type: number
+        default: 1
+        required: true
+      mode:
+        description: Document view
+        type: choice
+        options: [redline, latest, both]
+        default: redline
+      pages:
+        description: Publish the full viewer and screenshot excerpts
+        type: boolean
+        default: false
+      comments:
+        description: Update the PR comment
+        type: boolean
+        default: true
+
+permissions:
+  contents: read
+  actions: read
+  pull-requests: write
+  pages: write
+  id-token: write
+
+jobs:
+  review:
+    uses: JSv4/docx-actions/.github/workflows/review.yml@5cd3069414e1ab42788a7f00dfe4b68e26c78d6c
+    with:
+      pull-request: ${{ inputs.pull-request }}
+      mode: ${{ inputs.mode }}
+      pages: ${{ inputs.pages }}
+      comments: ${{ inputs.comments }}

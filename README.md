@@ -8,7 +8,7 @@ There is no file list, glob filter, original/revised pair, or custom preview scr
 in the workflow.
 
 **[Open the sample PR](https://github.com/JSv4/docxodus-action-demo/pull/1)** ·
-**[Read the browser previews](https://jsv4.github.io/docxodus-action-demo/)**
+**[Open the optional Pages viewer](https://jsv4.github.io/docxodus-action-demo/)**
 
 ## See automatic discovery work
 
@@ -26,20 +26,24 @@ cross-references, bookmarks, and multiple sections. The variants use different
 corporation names while demonstrating text edits, moved provisions, formatting,
 footnotes, and a newly inserted table.
 
-One automatic **Word document review** comment lists all documents, revision
-counts, browser links, and Word downloads. Expand a document's preview to see
-changes with preceding/following context and **Expand in full document** links.
-Multi-document previews start collapsed; a single-document PR opens its preview
-automatically. The browser viewer includes every changed passage and
-Previous/Next navigation. Images are rendered from the actual comparison output.
+The default **Word document review** comment lists all documents and revision
+counts, with expandable text redlines, surrounding context, and change logs.
+Download the complete Word/HTML review and change logs from its Actions artifact
+link. The default workflow has no Pages or OIDC permissions.
 
-The complete artifact bundle remains available in Actions, but reading the
-redlines does not require downloading a ZIP.
+The optional Pages mode adds styled screenshot excerpts, full-document links,
+and Previous/Next navigation. Run **Actions → Try review options → Run workflow**
+to try `redline`, `latest`, or `both`, and explicitly enable Pages if desired.
+Latest mode renders the current documents without running a comparison. None of
+these controls configure which document paths are discovered.
+
+Text redlines and change logs are readable directly in GitHub. Full document
+layout is available in the download and, when enabled, in the Pages viewer.
 
 ## The complete workflow
 
 [`.github/workflows/publish-previews.yml`](.github/workflows/publish-previews.yml)
-is the only workflow:
+is the automatic workflow:
 
 ```yaml
 name: Word document review
@@ -51,23 +55,23 @@ permissions:
   contents: read
   actions: read
   pull-requests: write
-  pages: write
-  id-token: write
 jobs:
   review:
-    uses: JSv4/docx-actions/.github/workflows/review.yml@v1.0.0
+    uses: JSv4/docx-actions/.github/workflows/review.yml@5cd3069414e1ab42788a7f00dfe4b68e26c78d6c
 ```
 
-The demo is pinned to the published `@v1.0.0` release.
+The demo is testing the v2 release candidate before pinning the published tag.
 There is deliberately **no `with:` block**.
 Discovery, Git history, engine setup,
-HTML rendering, screenshots, Pages deployment, and comment updates are packaged
-in `docx-actions`. GitHub Pages is enabled once with **GitHub Actions** as its
-source. No personal token or custom secrets are used.
+HTML rendering, change logs, comment updates, and optional Pages publication
+are packaged in `docx-actions`. No personal token or custom secrets are used.
+The separate manual `review-options.yml` exposes presentation controls and grants
+Pages permissions for the explicit opt-in. An already-deployed Pages site is
+left untouched by default runs.
 
 The workflow reads the PR's Word document blobs in a job with read-only repository
-access; it never checks out or executes PR code. The action owns the Pages site
-and publishes complete documents there. See its
+access; it never checks out or executes PR code. When explicitly enabled, the action owns the Pages site and publishes complete
+documents there; it checks ownership before replacing existing content. See its
 [installation documentation](https://github.com/JSv4/docx-actions#install-once)
 for use in another repository.
 
@@ -80,7 +84,8 @@ Rename a document and its previous path is retained. Push again to update the
 same bot-owned comment.
 
 There is no document-path configuration to update when adding a folder or file.
-Manual runs rebuild the preview index from existing artifacts. Previews for open
+Manual runs of the automatic workflow rebuild comments from existing artifacts.
+**Try review options** recomputes the selected PR in the selected mode. Previews for open
 PRs remain available while their comparison artifacts are retained (90 days).
 
 ## Source and reproducibility
@@ -93,7 +98,9 @@ not configured inputs to the GitHub workflow.
 
 [`documents/changes.json`](documents/changes.json) describes the illustrative
 negotiation edits. The sample variants apply those edits with corporation names
-Aurora Robotics, Harbor Analytics, and Aurora Labs. They retain the template's
+Aurora Robotics, Harbor Analytics, and Aurora Labs. Harbor retains the original
+30-day claims deadline; Aurora Labs adds an electronic notice register sentence.
+These small variations produce different revision counts. They retain the template's
 other alternatives and placeholders and are software fixtures, not completed
 charters.
 
