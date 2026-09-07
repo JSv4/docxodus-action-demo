@@ -15,14 +15,22 @@ This repository contains only the demo documents, workflows, and supporting scri
 
 ## See it work
 
+**[Open the browser demo](https://jsv4.github.io/docxodus-action-demo/)** — no ZIP
+download or local software needed.
+
 1. Open **[the sample pull request](https://github.com/JSv4/docxodus-action-demo/pull/1)**.
    It replaces one binary Word file in `contracts/` with a revised version.
-2. Open its **Redline changed Word documents** check, then the workflow run's
-   **Summary**. The action reports the compared commits and revision count.
-3. Download **nvca-pr-redlines** from the run's **Artifacts** section.
-   Open `contracts/certificate-of-incorporation.redline.html` in a browser,
-   or open the matching `.docx` in Word and choose **Review → All Markup**.
-   Word lets you accept and reject the generated revisions.
+2. Read the **Word redline preview** comment directly in the PR. It includes
+   formatted image excerpts and an expandable list of changed passages with
+   underlined insertions and struck deletions.
+3. Click **View full redline in your browser** for the complete HTML document,
+   with **Previous**, **Next**, and a passage selector to navigate changes.
+   Click an inline image or **Open passage** to jump straight to that change.
+
+The preview comment updates after each successful comparison. Images and links
+identify the source run and commit. Use **Download Word** in the browser viewer
+to get the tracked-changes DOCX directly, then choose **Review → All Markup** in Word
+to accept and reject revisions.
 
 For a comparison you can rerun at any time, open
 **[NVCA comparison demo](https://github.com/JSv4/docxodus-action-demo/actions/workflows/demo.yml)**
@@ -30,9 +38,14 @@ and select **Run workflow** on `main`. Its **nvca-comparison-demo** artifact inc
 both inputs, the redline DOCX, HTML preview, edit manifest, and verification report.
 The generated files are under `documents/` inside that bundle.
 
-GitHub requires sign-in to download workflow artifacts. Artifacts are retained
-for up to 90 days; rerun the demo to regenerate them. Opening the downloaded HTML
-locally shows the formatted redline; GitHub's source viewer does not render it.
+The full artifact bundle remains available as an optional download. GitHub requires
+sign-in for artifacts and retains them for up to 90 days. The current Pages deployment
+remains available independently; subsequent publications rebuild from the latest
+available successful runs.
+
+GitHub does not embed arbitrary styled HTML in PR comments. This demo uses images
+and restricted HTML for the inline review, and GitHub Pages for the complete
+formatted document. The images are excerpts of the actual redline, not mockups.
 
 ## What changes
 
@@ -108,15 +121,26 @@ Word documents and compares the PR merge-base to its head:
 
 The action revision, Python wrapper, companion engine wheel, and HTML tool are
 pinned; [`constraints.txt`](constraints.txt) fixes the action's engine dependency.
-Both workflows
-use `contents: read` and need no custom secrets or external document service.
+Both comparison workflows use `contents: read` and need no custom secrets or
+external document service.
+
+[`publish-previews.yml`](.github/workflows/publish-previews.yml) runs after a
+successful comparison. It reads the latest demo and open-PR artifacts, renders
+excerpts with Chromium, deploys the complete site to GitHub Pages, then updates
+one bot-owned comment per PR. It uses `pages: write`, `id-token: write`, and
+`pull-requests: write` through the built-in `GITHUB_TOKEN`.
+
+Publishing code is checked out from `main`; it never executes code from a PR
+artifact. This demo publishes same-repository PRs only. Pages must be enabled
+with **GitHub Actions** as its source in the repository's Pages settings.
 
 ## Try your own edit
 
 Create a branch from `main`, edit
 [`contracts/certificate-of-incorporation.docx`](contracts/certificate-of-incorporation.docx)
 in Word or LibreOffice, save it at the same path, commit, and open a pull request.
-The PR workflow generates a new artifact automatically when you push more edits.
+The PR workflow generates a new comparison automatically when you push more edits;
+the publishing workflow then refreshes its inline and browser previews.
 The sample PR is intentionally left open so its comparison is easy to inspect.
 
 Added/deleted files appear in the action summary but cannot produce a two-sided

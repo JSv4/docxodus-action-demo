@@ -3,3 +3,6 @@ __pycache__/
 redlines/
 .tools/
 *.zip
+_site/
+_preview_inputs/
+_preview_comments.json

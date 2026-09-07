@@ -69,3 +69,5 @@ jobs:
           echo "" >> "$GITHUB_STEP_SUMMARY"
           echo "[Download the NVCA review bundle](${ARTIFACT_URL})" >> "$GITHUB_STEP_SUMMARY"
           echo "Includes both inputs, the tracked-changes DOCX, HTML preview, edit manifest, and verification report." >> "$GITHUB_STEP_SUMMARY"
+          echo "" >> "$GITHUB_STEP_SUMMARY"
+          echo "[View the full redline in your browser](https://jsv4.github.io/docxodus-action-demo/) — updated by the publishing workflow after this run." >> "$GITHUB_STEP_SUMMARY"
