@@ -75,6 +75,8 @@ on pushes to `main` and on manual runs:
 
 ```yaml
 - uses: JSv4/Python-Redlines@a84be23f0e3d333572a5b5a5d6db2205ae2cb5cf
+  env:
+    PIP_CONSTRAINT: ${{ github.workspace }}/constraints.txt
   with:
     original: documents/original.docx
     modified: documents/revised.docx
@@ -93,6 +95,8 @@ Word documents and compares the PR merge-base to its head:
   with:
     fetch-depth: 0
 - uses: JSv4/Python-Redlines@a84be23f0e3d333572a5b5a5d6db2205ae2cb5cf
+  env:
+    PIP_CONSTRAINT: ${{ github.workspace }}/constraints.txt
   with:
     files: 'contracts/**/*.docx'
     engine: docxodus
@@ -102,7 +106,9 @@ Word documents and compares the PR merge-base to its head:
     html-preview: 'true'
 ```
 
-The action revision, Python package, and HTML tool are pinned. Both workflows
+The action revision, Python wrapper, companion engine wheel, and HTML tool are
+pinned; [`constraints.txt`](constraints.txt) fixes the action's engine dependency.
+Both workflows
 use `contents: read` and need no custom secrets or external document service.
 
 ## Try your own edit
