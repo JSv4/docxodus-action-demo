@@ -1,0 +1,3 @@
+python-redlines[docxodus]==1.0.0
+python-redlines-docxodus==1.0.0
+lxml==6.0.2

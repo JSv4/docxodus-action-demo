@@ -1,0 +1,140 @@
+{
+  "source_url": "https://nvca.org/wp-content/uploads/2025/10/NVCA-Model-COI-10-1-2025.docx",
+  "source_sha256": "d75600769c12724990de48149d7a2bb161f3522daa54b1783672f93697d87d29",
+  "revised_sha256": "c5e027ac931eadc2937db5693319e70c8e0847f832d1d982645df188139e1a4f",
+  "modified_package_parts": [
+    "word/document.xml",
+    "word/footnotes.xml"
+  ],
+  "original_body_paragraphs": 234,
+  "positive_id_footnotes": 95,
+  "edits": [
+    {
+      "kind": "replace",
+      "location": "Charter title",
+      "before": "[_________]",
+      "after": "Aurora Robotics, Inc."
+    },
+    {
+      "kind": "replace",
+      "location": "Introductory recital",
+      "before": "[____________]",
+      "after": "Aurora Robotics, Inc."
+    },
+    {
+      "kind": "replace",
+      "location": "Corporate name recital",
+      "before": "[_______________]",
+      "after": "Aurora Robotics, Inc."
+    },
+    {
+      "kind": "replace",
+      "location": "Article First",
+      "before": "[_______________]",
+      "after": "Aurora Robotics, Inc."
+    },
+    {
+      "kind": "replace",
+      "location": "Article Fourth — capitalization",
+      "before": "[______]",
+      "after": "15,000,000"
+    },
+    {
+      "kind": "replace",
+      "location": "Article Fourth — capitalization",
+      "before": "[two]",
+      "after": "two"
+    },
+    {
+      "kind": "replace",
+      "location": "Article Fourth — capitalization",
+      "before": "[_____]",
+      "after": "10,000,000"
+    },
+    {
+      "kind": "replace",
+      "location": "Article Fourth — capitalization",
+      "before": "$[_____]",
+      "after": "$0.0001"
+    },
+    {
+      "kind": "replace",
+      "location": "Article Fourth — capitalization",
+      "before": "[______]",
+      "after": "5,000,000"
+    },
+    {
+      "kind": "replace",
+      "location": "Article Fourth — capitalization",
+      "before": "$[______]",
+      "after": "$0.0001"
+    },
+    {
+      "kind": "replace",
+      "location": "Article Fourth — capitalization",
+      "before": "[all]",
+      "after": "all"
+    },
+    {
+      "kind": "replace",
+      "location": "Non-participating liquidation preference",
+      "before": "[__ times]",
+      "after": "1.5 times"
+    },
+    {
+      "kind": "replace",
+      "location": "Exhibit A — claims deadline",
+      "before": "within 30 days",
+      "after": "within 45 days"
+    },
+    {
+      "kind": "insert",
+      "location": "After Notices",
+      "after": "Demo delivery requirement. The Corporation shall retain an electronic copy of each notice and its delivery confirmation for five years."
+    },
+    {
+      "kind": "delete",
+      "location": "Exhibit A",
+      "before": "Advancement of Expenses of Employees and Agents. The Corporation may pay the expenses (including attorneys’ fees) incurred by an employee or agent in defending any Proceeding in advance of its final disposition on such terms and conditions as may be determined by the Board of Directors."
+    },
+    {
+      "kind": "move",
+      "location": "Exhibit A",
+      "text": "Insurance. The Board of Directors may, to the full extent permitted by applicable law as it presently exists, or may hereafter be amended from time to time, authorize an appropriate officer or officers to purchase and maintain at the Corporation’s expense insurance: (a) to indemnify the Corporation for any obligation which it incurs as a result of the indemnification of directors, officers and employees under the provisions of this Article Tenth; and (b) to indemnify or insure directors, officers and employees against liability in instances in which they may not otherwise be indemnified by the Corporation under the provisions of this Article Tenth.",
+      "after": "Before Right to Indemnification of Directors and Officers"
+    },
+    {
+      "kind": "format",
+      "location": "Exhibit A subtitle",
+      "before": null,
+      "after": "18 pt spacing before"
+    },
+    {
+      "kind": "footnote",
+      "location": "Footnote 2",
+      "after": " Demo note: this footnote is intentionally expanded to exercise comparison outside the document body."
+    },
+    {
+      "kind": "table",
+      "location": "End of document",
+      "after": [
+        [
+          "DEMO ONLY — term",
+          "Proposed value"
+        ],
+        [
+          "Authorized common shares",
+          "10,000,000"
+        ],
+        [
+          "Authorized preferred shares",
+          "5,000,000"
+        ],
+        [
+          "Liquidation preference",
+          "1.5 times"
+        ]
+      ]
+    }
+  ]
+}
