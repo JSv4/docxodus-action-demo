@@ -55,10 +55,11 @@ permissions:
   id-token: write
 jobs:
   review:
-    uses: JSv4/docx-actions/.github/workflows/review.yml@v1
+    uses: JSv4/docx-actions/.github/workflows/review.yml@v1.0.0
 ```
 
-The demo uses the published `@v1` release line. There is deliberately **no `with:` block**.
+The demo is pinned to the published `@v1.0.0` release.
+There is deliberately **no `with:` block**.
 Discovery, Git history, engine setup,
 HTML rendering, screenshots, Pages deployment, and comment updates are packaged
 in `docx-actions`. GitHub Pages is enabled once with **GitHub Actions** as its
