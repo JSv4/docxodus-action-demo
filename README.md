@@ -21,11 +21,13 @@ download or local software needed.
 1. Open **[the sample pull request](https://github.com/JSv4/docxodus-action-demo/pull/1)**.
    It replaces one binary Word file in `contracts/` with a revised version.
 2. Read the **Word redline preview** comment directly in the PR. It includes
-   formatted image excerpts and an expandable list of changed passages with
+   formatted excerpts with preceding and following text, plus an expandable list of changed passages with
    underlined insertions and struck deletions.
 3. Click **View full redline in your browser** for the complete HTML document,
    with **Previous**, **Next**, and a passage selector to navigate changes.
-   Click an inline image or **Open passage** to jump straight to that change.
+   Click **Expand in full document** beneath an excerpt (or the excerpt itself)
+   to jump straight to that change. Context previews show the last few lines before
+   an edit and the first few lines after it, with the changed paragraph in between.
 
 The preview comment updates after each successful comparison. Images and links
 identify the source run and commit. Use **Download Word** in the browser viewer

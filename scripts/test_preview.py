@@ -6,7 +6,7 @@ import unittest
 
 from lxml import etree as ET
 
-from build_preview import prepare_document
+from build_preview import contextual_excerpt, neighboring_block, prepare_document
 
 
 class PreviewTests(unittest.TestCase):
@@ -31,6 +31,26 @@ class PreviewTests(unittest.TestCase):
             root = ET.parse(str(target))
             self.assertFalse(root.xpath('//*[local-name()="script" or local-name()="iframe"]'))
             self.assertEqual(changes[1]["kind"], 'Formatting')
+
+    def test_excerpt_retains_adjacent_context_and_stays_in_its_section(self):
+        with TemporaryDirectory() as directory:
+            source = Path(directory) / "input.html"
+            target = Path(directory) / "output.html"
+            source.write_text('''<html xmlns="http://www.w3.org/1999/xhtml"><head/><body>
+<div><p>Unrelated prior section.</p></div><div>
+<p>Prior paragraph establishes the notice requirement.</p><p> </p>
+<p>Notice is due within <del>30</del> <ins>45</ins> days.</p>
+<p>The following paragraph describes delivery.</p></div></body></html>''')
+            [change] = prepare_document(source, target)
+            result = contextual_excerpt(target, change, 1, 1)
+            text = "".join(result.itertext())
+            self.assertIn("Prior paragraph establishes", text)
+            self.assertIn("following paragraph describes", text)
+            self.assertIn("Expand in full document", text)
+            self.assertNotIn("Unrelated prior section", text)
+            self.assertEqual(len(result.xpath('//*[local-name()="ins"]')), 1)
+            before = neighboring_block(change["node"], "before")
+            self.assertIsNone(neighboring_block(before, "before"))
 
 
 if __name__ == "__main__":

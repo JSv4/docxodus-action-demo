@@ -48,6 +48,8 @@ def main():
             assert len(comment["body"]) < 65536, "PR comment exceeds GitHub limit"
             assert "<ins>" in comment["body"] and "<del>" in comment["body"]
             assert "preview-1-" in comment["body"]
+            assert "with surrounding text" in comment["body"]
+            assert "⤢ Expand excerpt 1 in full document" in comment["body"]
         print("Preview navigation, images, deep links, mobile layout, and inline comment checks passed")
     finally:
         server.shutdown()

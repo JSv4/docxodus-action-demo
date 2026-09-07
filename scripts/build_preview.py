@@ -89,6 +89,53 @@ def shell(title, content, prefix="./"):
 <body>{content}</body></html>'''
 
 
+def neighboring_block(node, direction):
+    """Find adjacent document text in the same section or table, skipping blanks."""
+    sibling = node.getprevious() if direction == "before" else node.getnext()
+    while sibling is not None:
+        if isinstance(sibling.tag, str) and plain(sibling):
+            return sibling
+        sibling = sibling.getprevious() if direction == "before" else sibling.getnext()
+    return None
+
+
+def append_block(parent, node):
+    fragment = deepcopy(node)
+    if ET.QName(fragment).localname == "tr":
+        source_table = node.xpath("ancestor::h:table[1]", namespaces=NS)
+        table = ET.SubElement(parent, H + "table", **(dict(source_table[0].attrib) if source_table else {}))
+        table.append(fragment)
+    else:
+        parent.append(fragment)
+
+
+def contextual_excerpt(document, change, index, total):
+    root = ET.parse(str(document)).getroot()
+    body = root.find("h:body", NS)
+    for child in list(body):
+        body.remove(child)
+    style = ET.SubElement(root.find("h:head", NS), H + "style")
+    style.text = (ROOT / "preview/assets/excerpt.css").read_text()
+    card = ET.SubElement(body, H + "section", {"class": "review-excerpt"})
+    header = ET.SubElement(card, H + "header", {"class": "excerpt-header"})
+    ET.SubElement(header, H + "span").text = f"EXCERPT {index} OF {total}"
+    ET.SubElement(header, H + "strong").text = f"Passage {change['number']} · {change['kind']} change"
+    before = neighboring_block(change["node"], "before")
+    after = neighboring_block(change["node"], "after")
+    for label, node in [("Before", before), ("Changed passage", change["node"]), ("After", after)]:
+        if node is None:
+            continue
+        role = "focus" if label == "Changed passage" else label.lower()
+        section = ET.SubElement(card, H + "div", {"class": f"excerpt-section excerpt-{role}"})
+        ET.SubElement(section, H + "div", {"class": "excerpt-label"}).text = label
+        window = ET.SubElement(section, H + "div", {"class": "excerpt-window"})
+        append_block(window, node)
+    footer = ET.SubElement(card, H + "footer", {"class": "excerpt-footer"})
+    ET.SubElement(footer, H + "span", {"class": "excerpt-hint"}).text = "Continue reading with all surrounding text."
+    ET.SubElement(footer, H + "span", {"class": "excerpt-expand"}).text = "⤢ Expand in full document ↗"
+    return root
+
+
 def render_images(browser, document, changes, output):
     if not changes:
         return []
@@ -102,23 +149,17 @@ def render_images(browser, document, changes, output):
     page = browser.new_page(viewport={"width": 1000, "height": 1000}, device_scale_factor=1.5)
     page.route(re.compile(r"https?://"), lambda route: route.abort())
     for index, change in enumerate(selected, 1):
-        # Keep the original styles and selected block, including its numbering.
-        root = ET.parse(str(document)).getroot()
-        body = root.find("h:body", NS)
-        for child in list(body):
-            body.remove(child)
-        fragment = deepcopy(change["node"])
-        if ET.QName(fragment).localname == "tr":
-            table = ET.SubElement(body, H + "table")
-            table.append(fragment)
-        else:
-            body.append(fragment)
+        # Preserve the neighboring paragraphs and document styling around the edit.
+        root = contextual_excerpt(document, change, index, len(selected))
         excerpt = output / f"excerpt-{index}.html"
         excerpt.write_bytes(ET.tostring(root, encoding="UTF-8"))
         page.goto(excerpt.resolve().as_uri())
         page.evaluate("document.fonts.ready")
+        page.evaluate("""document.querySelectorAll('.excerpt-before .excerpt-window, .excerpt-after .excerpt-window').forEach(window => {
+            window.toggleAttribute('data-clipped', window.firstElementChild.getBoundingClientRect().height > window.clientHeight + 1);
+        })""")
         name = f"preview-{index}.png"
-        page.locator("[data-review-change]").screenshot(path=str(output / name))
+        page.locator(".review-excerpt").screenshot(path=str(output / name))
         # GitHub proxies comment images; a content hash prevents stale cached crops.
         fingerprint = sha256((output / name).read_bytes()).hexdigest()[:12]
         hashed_name = f"preview-{index}-{fingerprint}.png"
@@ -179,9 +220,11 @@ def build(catalog_path, output, base_url):
                 (directory / "index.html").write_text(shell(filename, content, prefix))
                 url = f"{base_url.rstrip('/')}/{relative}/"
                 comment.extend([f"### {html.escape(Path(filename).name)}", "", f"**[{count_label} — View full redline in your browser]({url})** · [Download Word]({url}redline.docx)", ""])
-                for image in images:
-                    comment.extend([f'[![{image["kind"]} change excerpt]({url}{image["name"]})]({url}#{image["anchor"]})', ""])
-                comment.extend(["<details>", "<summary>Read changed passages directly in GitHub</summary>", ""])
+                comment.extend([f"Showing {len(images)} excerpts with surrounding text. Expand an excerpt to continue at that passage in the full document; all {len(changes)} changed passages are listed below.", ""])
+                for index, image in enumerate(images, 1):
+                    comment.extend([f'[![{image["kind"]} change with preceding and following context]({url}{image["name"]})]({url}#{image["anchor"]})', "",
+                                    f'**[⤢ Expand excerpt {index} in full document ↗]({url}#{image["anchor"]})**', ""])
+                comment.extend(["<details>", f"<summary>Read all {len(changes)} changed passages directly in GitHub</summary>", ""])
                 # Bound comment size; every passage remains accessible in the full viewer.
                 for change in changes:
                     line = f'**{change["number"]}. {change["kind"]}** · [Open passage]({url}#{change["id"]})\n\n<p>{change["markup"]}</p>\n'
