@@ -1,0 +1,2 @@
+# The action's Python extra does not itself pin the companion engine wheel.
+python-redlines-docxodus==1.0.0
