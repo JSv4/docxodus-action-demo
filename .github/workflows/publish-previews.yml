@@ -25,5 +25,5 @@ jobs:
   review:
     uses: JSv4/docx-actions/.github/workflows/review.yml@8ee6e587cba9f30f87b68faa9745ce143c4b189d
     with:
-      pull-request: ${{ github.event_name == 'workflow_dispatch' && inputs.pull-request || 0 }}
-      publish: ${{ github.event_name != 'workflow_dispatch' || inputs.publish }}
+      pull-request: ${{ fromJSON(format('{0}', inputs.pull-request || 0)) }}
+      publish: ${{ github.event_name != 'workflow_dispatch' || fromJSON(format('{0}', inputs.publish)) }}
