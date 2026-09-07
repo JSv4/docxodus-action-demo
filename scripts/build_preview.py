@@ -2,6 +2,7 @@
 
 import argparse
 from copy import deepcopy
+from hashlib import sha256
 import html
 import json
 import os
@@ -117,7 +118,12 @@ def render_images(browser, document, changes, output):
         page.goto(excerpt.resolve().as_uri())
         page.evaluate("document.fonts.ready")
         name = f"preview-{index}.png"
-        page.locator("body").screenshot(path=str(output / name))
+        page.locator("[data-review-change]").screenshot(path=str(output / name))
+        # GitHub proxies comment images; a content hash prevents stale cached crops.
+        fingerprint = sha256((output / name).read_bytes()).hexdigest()[:12]
+        hashed_name = f"preview-{index}-{fingerprint}.png"
+        (output / name).replace(output / hashed_name)
+        name = hashed_name
         excerpt.unlink()
         images.append({"name": name, "anchor": change["id"], "label": change["label"], "kind": change["kind"]})
     page.close()
