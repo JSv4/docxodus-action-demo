@@ -33,7 +33,7 @@ jobs:
   review:
     uses: JSv4/docx-actions/.github/workflows/review.yml@5cd3069414e1ab42788a7f00dfe4b68e26c78d6c
     with:
-      pull-request: ${{ inputs.pull-request }}
+      pull-request: ${{ fromJSON(format('{0}', inputs.pull-request)) }}
       mode: ${{ inputs.mode }}
-      pages: ${{ inputs.pages }}
-      comments: ${{ inputs.comments }}
+      pages: ${{ fromJSON(format('{0}', inputs.pages)) }}
+      comments: ${{ fromJSON(format('{0}', inputs.comments)) }}
