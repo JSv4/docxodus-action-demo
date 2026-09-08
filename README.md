@@ -60,12 +60,12 @@ permissions:
   pull-requests: write
 jobs:
   review:
-    uses: JSv4/docx-actions/.github/workflows/review.yml@v2.1.0
+    uses: JSv4/docx-actions/.github/workflows/review.yml@v2.1.1
     with:
       image-host: branch
 ```
 
-The demo is pinned to the published `@v2.1.0` release.
+The demo is pinned to the published `@v2.1.1` release.
 The only `with:` setting controls image hosting. **No document paths or comparison
 pairs are configured.**
 Discovery, Git history, engine setup,

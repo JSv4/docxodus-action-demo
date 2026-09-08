@@ -36,7 +36,7 @@ permissions:
 
 jobs:
   review:
-    uses: JSv4/docx-actions/.github/workflows/review.yml@v2.1.0
+    uses: JSv4/docx-actions/.github/workflows/review.yml@v2.1.1
     with:
       pull-request: ${{ fromJSON(format('{0}', inputs.pull-request)) }}
       mode: ${{ inputs.mode }}
