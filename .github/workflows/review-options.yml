@@ -14,16 +14,21 @@ on:
         options: [redline, latest, both]
         default: redline
       pages:
-        description: Publish the full viewer and screenshot excerpts
+        description: Publish the full interactive viewer
         type: boolean
         default: false
+      image-host:
+        description: Where to host inline screenshot excerpts
+        type: choice
+        options: [branch, auto, none]
+        default: branch
       comments:
         description: Update the PR comment
         type: boolean
         default: true
 
 permissions:
-  contents: read
+  contents: write
   actions: read
   pull-requests: write
   pages: write
@@ -31,9 +36,10 @@ permissions:
 
 jobs:
   review:
-    uses: JSv4/docx-actions/.github/workflows/review.yml@v2.0.0
+    uses: JSv4/docx-actions/.github/workflows/review.yml@27be20aff63e9d3a6ea0ab3f5a82173814bad0bb
     with:
       pull-request: ${{ fromJSON(format('{0}', inputs.pull-request)) }}
       mode: ${{ inputs.mode }}
+      image-host: ${{ inputs.image-host }}
       pages: ${{ fromJSON(format('{0}', inputs.pages)) }}
       comments: ${{ fromJSON(format('{0}', inputs.comments)) }}

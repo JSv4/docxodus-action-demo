@@ -27,18 +27,21 @@ corporation names while demonstrating text edits, moved provisions, formatting,
 footnotes, and a newly inserted table.
 
 The default **Word document review** comment lists all documents and revision
-counts, with expandable text redlines, surrounding context, and change logs.
+counts, with styled screenshot excerpts, surrounding context, and expandable
+text redlines and change logs. Click **Enlarge excerpt** for a full-size image.
 Download the complete Word/HTML review and change logs from its Actions artifact
-link. The default workflow has no Pages or OIDC permissions.
+link. PNG previews are hosted on the dedicated `docx-previews` branch using the
+standard Actions token. This workflow has no Pages or OIDC permissions.
 
-The optional Pages mode adds styled screenshot excerpts, full-document links,
+The optional Pages mode adds full-document links
 and Previous/Next navigation. Run **Actions → Try review options → Run workflow**
-to try `redline`, `latest`, or `both`, and explicitly enable Pages if desired.
+to try `redline`, `latest`, or `both`, choose image hosting, and explicitly enable Pages if desired.
 Latest mode renders the current documents without running a comparison. None of
 these controls configure which document paths are discovered.
 
-Text redlines and change logs are readable directly in GitHub. Full document
-layout is available in the download and, when enabled, in the Pages viewer.
+Styled image excerpts, text redlines, and change logs are readable directly in
+GitHub. Full document layout is available in the download and, when enabled, in
+the Pages viewer.
 
 ## The complete workflow
 
@@ -52,22 +55,31 @@ on:
     types: [opened, synchronize, reopened, closed]
   workflow_dispatch:
 permissions:
-  contents: read
+  contents: write
   actions: read
   pull-requests: write
 jobs:
   review:
-    uses: JSv4/docx-actions/.github/workflows/review.yml@v2.0.0
+    uses: JSv4/docx-actions/.github/workflows/review.yml@27be20aff63e9d3a6ea0ab3f5a82173814bad0bb
+    with:
+      image-host: branch
 ```
 
-The demo is pinned to the published `@v2.0.0` release.
-There is deliberately **no `with:` block**.
+The demo is testing the branch-image implementation at the pinned commit above.
+The only `with:` setting controls image hosting. **No document paths or comparison
+pairs are configured.**
 Discovery, Git history, engine setup,
 HTML rendering, change logs, comment updates, and optional Pages publication
 are packaged in `docx-actions`. No personal token or custom secrets are used.
 The separate manual `review-options.yml` exposes presentation controls and grants
 Pages permissions for the explicit opt-in. An already-deployed Pages site is
 left untouched by default runs.
+
+The image branch is separate from the source history and contains only generated
+PNGs and metadata. Image URLs are pinned to commits; previous excerpts remain
+in Git history after a PR closes or its Actions artifacts expire. Branch image
+hosting is an opt-in feature for public repositories. Other installations can
+keep the action's text-only default with `contents: read`.
 
 The workflow reads the PR's Word document blobs in a job with read-only repository
 access; it never checks out or executes PR code. When explicitly enabled, the action owns the Pages site and publishes complete
