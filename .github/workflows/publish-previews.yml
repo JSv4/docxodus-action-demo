@@ -12,6 +12,6 @@ permissions:
 
 jobs:
   review:
-    uses: JSv4/docx-actions/.github/workflows/review.yml@27be20aff63e9d3a6ea0ab3f5a82173814bad0bb
+    uses: JSv4/docx-actions/.github/workflows/review.yml@v2.1.0
     with:
       image-host: branch
