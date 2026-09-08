@@ -60,12 +60,12 @@ permissions:
   pull-requests: write
 jobs:
   review:
-    uses: JSv4/docx-actions/.github/workflows/review.yml@27be20aff63e9d3a6ea0ab3f5a82173814bad0bb
+    uses: JSv4/docx-actions/.github/workflows/review.yml@v2.1.0
     with:
       image-host: branch
 ```
 
-The demo is testing the branch-image implementation at the pinned commit above.
+The demo is pinned to the published `@v2.1.0` release.
 The only `with:` setting controls image hosting. **No document paths or comparison
 pairs are configured.**
 Discovery, Git history, engine setup,
@@ -97,8 +97,9 @@ same bot-owned comment.
 
 There is no document-path configuration to update when adding a folder or file.
 Manual runs of the automatic workflow rebuild comments from existing artifacts.
-**Try review options** recomputes the selected PR in the selected mode. Previews for open
-PRs remain available while their comparison artifacts are retained (90 days).
+**Try review options** recomputes the selected PR in the selected mode. Complete
+downloadable reviews remain available while their artifacts are retained (90
+days). Published comment images remain in the image branch's Git history.
 
 ## Source and reproducibility
 
